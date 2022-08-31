@@ -1,0 +1,2 @@
+# AdivinaAdivinador
+Clone of akinator
