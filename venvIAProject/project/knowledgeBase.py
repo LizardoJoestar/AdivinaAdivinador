@@ -3,6 +3,7 @@ import pytholog as pl
 kb = pl.KnowledgeBase("MrWho") 
 
 kb([
+    # Instead of prolog's "dif", use pytholog's "neq"
     # FACTS
     "dividedin(tec, unit)",
     "is_tec_campus(otay)",
@@ -73,9 +74,9 @@ kb([
     "usedbymechanics(X):- uses(mechanics, X)",
     "usedbyarchitecture(X):- uses(architecture, X)",
     "usedbybiomedics(X):- uses(biomedics, X)",
-    "same_campus(X, Y):- dif(X, Y), partof(X, Z), partof(Y, Z), is_tec_campus(Z)","used_by_same_major(X, Y):- dif(X, Y), uses(Z, X), uses(Z, Y)","available_at_campus(X, Y):- is_tec_campus(Y), partof(X, Y)",
+    "same_campus(X, Y):- neq(X, Y), partof(X, Z), partof(Y, Z), is_tec_campus(Z)","used_by_same_major(X, Y):- neq(X, Y), uses(Z, X), uses(Z, Y)","available_at_campus(X, Y):- is_tec_campus(Y), partof(X, Y)",
     "used_by_major(X, Y, Z):- used_by_same_major(Y, Z), uses(X, Y), uses(X, Z), partof(X, W), is_tec_campus(W)",
-    "use_same_tools(X, Y):- dif(X, Y), partof(X, M), partof(Y, N), is_tec_campus(M), is_tec_campus(N), uses(X, W), uses(Y, W)"
+    "use_same_tools(X, Y):- neq(X, Y), partof(X, M), partof(Y, N), is_tec_campus(M), is_tec_campus(N), uses(X, W), uses(Y, W)"
 ])
 
 print(kb.query(pl.Expr("available_at_campus(X, tomasaquino)")))
