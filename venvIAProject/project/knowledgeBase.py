@@ -78,6 +78,3 @@ kb([
     "used_by_major(X, Y, Z):- used_by_same_major(Y, Z), uses(X, Y), uses(X, Z), partof(X, W), is_tec_campus(W)",
     "use_same_tools(X, Y):- neq(X, Y), partof(X, M), partof(Y, N), is_tec_campus(M), is_tec_campus(N), uses(X, W), uses(Y, W)"
 ])
-
-print(kb.query(pl.Expr("available_at_campus(X, tomasaquino)")))
-print(kb.query(pl.Expr("available_at_campus(industrial, tomasaquino)")))
