@@ -78,3 +78,18 @@ kb([
     "used_by_major(X, Y, Z):- used_by_same_major(Y, Z), uses(X, Y), uses(X, Z), partof(X, W), is_tec_campus(W)",
     "use_same_tools(X, Y):- neq(X, Y), partof(X, M), partof(Y, N), is_tec_campus(M), is_tec_campus(N), uses(X, W), uses(Y, W)"
 ])
+
+# print(kb.query(pl.Expr("same_campus(systems,tics")))
+# campus = kb.query(pl.Expr(f"partof(systems,X"))[0]['X']
+# print(campus)
+# alts = kb.query(pl.Expr("available_at_campus(X,tomasaquino"))
+# print(alts)
+
+# temp = []
+# for item in alts:
+#     temp.append(item['X'])
+# print(temp)
+
+# print(kb.query(pl.Expr("use_same_tools(electromechanics,industrial)")))
+
+# print(kb.query(pl.Expr("uses(systems, X)")))

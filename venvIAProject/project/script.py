@@ -15,6 +15,9 @@ otay = {
 
 
 def questionLoop():
+    """
+    Loop through a list of questions at random, without repetition.
+    """
     while len(qList) > 0:
         index = random.randint(0, len(qList)-1)
         showQuestion(index)
@@ -22,6 +25,9 @@ def questionLoop():
 
 
 def showQuestion(index):
+    """
+    Prints a question at index, accepts answer from user and increments or decrements points depending on the majors the question affects.
+    """
     # Show the question at index, from key "question"
     answer = input(qList[index].get("question") + "\n")
 
@@ -44,8 +50,7 @@ def showQuestion(index):
 
 def showPoints():
     """
-    For debugging; prints the points total of each major of each
-    campus
+    For debugging; prints the points total of each major of each campus.
     """
     print("\n")
     for major in tomasAquino:
@@ -56,6 +61,10 @@ def showPoints():
 
 
 def getRecommended():
+    """
+    Returns a list of the recommended majors, i.e., those with the most points.
+    If more than one major have the same points, put them all in the list.
+    """
     recommended = []
     maximum = 0
 
@@ -100,13 +109,119 @@ def getRecommended():
     return recommended
 
 
+def checkSameCampus(recommended):
+    """
+    Returns a filtered list of the recommended majors list passed in.
+    If the list is just one element, return the same list.
+    If the list has more than one element, return just those in the same campus.
+    If the filtered list didn't get any results (size is 0), return the same list.
+    """
+    filteredRec = []
+
+    if len(recommended) > 1:
+        for i in range(len(recommended)):
+            for j in range(len(recommended)):
+                same_campus = kb.query(
+                    pl.Expr(f"same_campus({recommended[i]},{recommended[j]})"))
+
+                if same_campus[0] == 'Yes':
+                    if recommended[i] not in filteredRec:
+                        filteredRec.append(recommended[i])
+                    if recommended[j] not in filteredRec:
+                        filteredRec.append(recommended[j])
+    else:
+        filteredRec.append(recommended[0])
+
+    # If all majors are in different campuses, pass the recommended ones as is
+    if len(filteredRec) == 0:
+        for rec in recommended:
+            filteredRec.append(rec)
+
+    return filteredRec
+
+
+def checkAlternatives(major):
+    """
+    Returns a list of alternative majors in the same campus, and that share some of the same tools and subjects.
+    """
+    # Query returns a list with just one item. So, select for index 0
+    # and value of key X to get it
+    campus = kb.query(pl.Expr(f"partof({major},X"))[0]['X']
+
+    # This returns a list of dictionaries, each one with a single item
+    temp1 = kb.query(pl.Expr(f"available_at_campus(X,{campus})"))
+
+    # Filter the dictionary list to store only the values (majors in same campus)
+    temp2 = []
+    for item in temp1:
+        temp2.append(item['X'])
+
+    # Now compare this list of majors in same campus with first choice major
+    # to know if they share the same tools or subjects
+    alternatives = []
+    for item in temp2:
+        answer = kb.query(pl.Expr(f"use_same_tools({major},{item})"))
+
+        if answer[0] == 'Yes':
+            alternatives.append(item)
+
+    return alternatives
+
+
+def checkToolsUsed(recommended):
+    """
+    Returns a list of tools used per major in recommended list parameter.
+    """
+    toolsUsed = []
+
+    for major in recommended:
+        tools = kb.query(pl.Expr(f"uses({major},X"))
+        for tool in tools:
+            if tool['X'] not in toolsUsed:
+                toolsUsed.append(tool['X'])
+
+    return toolsUsed
+
+
 def report():
+    """
+    Generates a report of recommended majors, alternative majors and relevant subjects/tools, based on user answers in previous question loop.
+    """
+    recommended = getRecommended()
+
+    # This 3 functions make use of prolog queries, therefore making use of
+    # (rudimentary) AI in the form of a knowledge base and the prolog inference
+    # engine
+    filteredRec = checkSameCampus(recommended)
+    alternatives = checkAlternatives(filteredRec[0])
+    toolsUsed = checkToolsUsed(filteredRec)
+
+    print("\nEn base a tus respuestas, te recomendamos esta carrera(s):")
+    for item in filteredRec:
+        print(item)
+
+    if len(alternatives) > 0:
+        print("\nTambien te recomendamos estas carreras similares en el mismo campus:")
+        for item in alternatives:
+            print(item)
+    
+    print("\nY estos son los temas o herramientas relevantes a tu recomendación:")
+    for item in toolsUsed:
+        print(item)
+
+
+def testing():
+    """
+    For testing purpouses
+    """
+    showPoints()
     print(getRecommended())
 
 
 def init():
+    # questionLoop() must always go first
     questionLoop()
-    showPoints()
+    # testing()
     report()
 
 
