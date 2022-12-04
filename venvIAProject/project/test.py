@@ -26,3 +26,10 @@ print(new_kb.query(pl.Expr("likes(noor, pasta)")))
 # ['No']
 
 print(new_kb.query(pl.Expr("dish_to_like(noor, What)")))
+
+# Test lines
+# tomasAquino = kb.query(pl.Expr("available_at_campus(X, tomasaquino)"))
+# otay = kb.query(pl.Expr("available_at_campus(X, otay)"))
+
+# print(tomasAquino)
+# print(otay)
