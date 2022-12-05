@@ -204,7 +204,7 @@ def report():
         print("\nTambien te recomendamos estas carreras similares en el mismo campus:")
         for item in alternatives:
             print(item)
-    
+
     print("\nY estos son los temas o herramientas relevantes a tu recomendación:")
     for item in toolsUsed:
         print(item)
